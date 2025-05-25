@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rabattkoder</title>
+  <style>
+    body {
+      background-color: #111;
+      color: limegreen;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aktuella Rabattkoder</h1>
+  <ul id="koder"></ul>
+  <script>
+    fetch('https://din-backend.onrender.com/api/koder')
+      .then(res => res.json())
+      .then(data => {
+        const ul = document.getElementById('koder');
+        data.koder.forEach(kod => {
+          const li = document.createElement('li');
+          li.textContent = `${kod.butik}: ${kod.kod} (${kod.beskrivning})`;
+          ul.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
