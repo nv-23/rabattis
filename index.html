@@ -3,30 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rabattkoder</title>
+  <title>Rabattkoder Sverige</title>
   <style>
     body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
       background-color: #111;
+      color: #eee;
+    }
+    header {
+      background-color: #111;
+      border-bottom: 2px solid limegreen;
+      padding: 1rem;
+      text-align: center;
+    }
+    h1 {
       color: limegreen;
-      font-family: sans-serif;
-      padding: 2rem;
+      font-size: 2rem;
+    }
+    .kod-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    .kod-kort {
+      background: #222;
+      border-left: 5px solid limegreen;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .kod-kort h2 {
+      margin: 0 0 0.5rem;
+      color: limegreen;
+    }
+    .kod-kort p {
+      margin: 0.25rem 0;
+    }
+    .kod {
+      background: limegreen;
+      color: black;
+      font-weight: bold;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
-  <h1>Aktuella Rabattkoder</h1>
-  <ul id="koder"></ul>
+  <header>
+    <h1>🔥 Aktuella Rabattkoder</h1>
+  </header>
+  <main class="kod-lista" id="kodLista">
+    <p>Laddar koder...</p>
+  </main>
+
   <script>
-    fetch('https://din-backend.onrender.com/api/koder')
-      .then(res => res.json())
-      .then(data => {
-        const ul = document.getElementById('koder');
+    async function hamtaKoder() {
+      const container = document.getElementById("kodLista");
+      container.innerHTML = "<p>Laddar koder...</p>";
+      try {
+        const res = await fetch("https://rabattis-backend.onrender.com/api/koder");
+        const data = await res.json();
+        if (data.koder.length === 0) {
+          container.innerHTML = "<p>Inga rabattkoder hittades.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
         data.koder.forEach(kod => {
-          const li = document.createElement('li');
-          li.textContent = `${kod.butik}: ${kod.kod} (${kod.beskrivning})`;
-          ul.appendChild(li);
+          const el = document.createElement("div");
+          el.className = "kod-kort";
+          el.innerHTML = `
+            <h2>${kod.butik}</h2>
+            <p><span class="kod">${kod.kod}</span></p>
+            <p>${kod.beskrivning}</p>
+            <p><a href="${kod.url}" target="_blank" style="color: limegreen">Till butik</a></p>
+          `;
+          container.appendChild(el);
         });
-      });
+      } catch (err) {
+        container.innerHTML = "<p>Kunde inte hämta koder just nu.</p>";
+        console.error(err);
+      }
+    }
+
+    hamtaKoder();
   </script>
 </body>
 </html>
