@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 2em;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff;
+}
+
+.kod-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.kod-box {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.kod-box h2 {
+    margin-top: 0;
+}
+
+.kod-box a {
+    color: #007bff;
+    text-decoration: none;
+}
