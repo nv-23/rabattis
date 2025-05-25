@@ -59,7 +59,7 @@
   </table>
 
 <script>
-  const apiUrl = "https://rabattis-backend.onrender.com/api/koder"; // Ändra till din backend-URL
+  const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
 
   async function fetchKoder() {
     try {
@@ -78,4 +78,42 @@
 
     if (koder.length === 0) {
       tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
-      ret
+      return;
+    }
+
+    for (const kod of koder) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="accent">${kod.kod}</td>
+        <td>${kod.butik}</td>
+        <td>${kod.beskrivning}</td>
+        <td><a href="${kod.url}" target="_blank" style="color:lightblue;">Länk</a></td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function filterKoder(koder, query) {
+    if (!query) return koder;
+    query = query.toLowerCase();
+    return koder.filter(k =>
+      (k.kod || "").toLowerCase().includes(query) ||
+      (k.butik || "").toLowerCase().includes(query) ||
+      (k.beskrivning || "").toLowerCase().includes(query)
+    );
+  }
+
+  document.getElementById("searchInput").addEventListener("input", async (e) => {
+    const query = e.target.value;
+    const allKoder = await fetchKoder();
+    const filtered = filterKoder(allKoder, query);
+    renderTable(filtered);
+  });
+
+  (async () => {
+    const koder = await fetchKoder();
+    renderTable(koder);
+  })();
+</script>
+</body>
+</html>
