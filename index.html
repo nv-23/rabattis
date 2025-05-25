@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rabattkoder</title>
-<style>
-  body {
-    background-color: #121212;
-    color: #d0d0d0;
-    font-family: Arial, sans-serif;
-    margin: 20px;
-  }
-  h1 {
-    color: limegreen;
-    text-align: center;
-  }
-  input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    background-color: #222;
-    border: none;
-    color: #d0d0d0;
-    border-radius: 5px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  th, td {
-    border-bottom: 1px solid #333;
-    padding: 10px;
-    text-align: left;
-  }
-  th {
-    background-color: #1a1a1a;
-  }
-  tr:hover {
-    background-color: #2a2a2a;
-  }
-  .accent {
-    color: limegreen;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rabattkoder</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #d0d0d0;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: limegreen;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #222;
+      border: none;
+      color: #d0d0d0;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border-bottom: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #1a1a1a;
+    }
+    tr:hover {
+      background-color: #2a2a2a;
+    }
+    .accent {
+      color: limegreen;
+    }
+  </style>
 </head>
 <body>
   <h1>Rabattkoder</h1>
@@ -51,7 +51,7 @@
 
   <table id="codesTable">
     <thead>
-      <tr><th>Kod</th><th>Butik</th><th>Beskrivning</th><th>Utgångsdatum</th></tr>
+      <tr><th>Kod</th><th>Butik</th><th>Beskrivning</th><th>Länk</th></tr>
     </thead>
     <tbody>
       <!-- Rabattkoder kommer här -->
@@ -59,7 +59,7 @@
   </table>
 
 <script>
-  const apiUrl = "https://din-backend-url/api/koder"; // Ändra till din backend-URL
+  const apiUrl = "https://rabattis-backend.onrender.com/api/koder"; // Ändra till din backend-URL
 
   async function fetchKoder() {
     try {
@@ -78,43 +78,4 @@
 
     if (koder.length === 0) {
       tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
-      return;
-    }
-
-    for (const kod of koder) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="accent">${kod.code || kod.kod || ""}</td>
-        <td>${kod.store || kod.butiksnamn || ""}</td>
-        <td>${kod.description || kod.beskrivning || ""}</td>
-        <td>${kod.expires || kod.utgångsdatum || ""}</td>
-      `;
-      tbody.appendChild(tr);
-    }
-  }
-
-  function filterKoder(koder, query) {
-    if (!query) return koder;
-    query = query.toLowerCase();
-    return koder.filter(k =>
-      (k.code || k.kod || "").toLowerCase().includes(query) ||
-      (k.store || k.butiksnamn || "").toLowerCase().includes(query) ||
-      (k.description || k.beskrivning || "").toLowerCase().includes(query)
-    );
-  }
-
-  document.getElementById("searchInput").addEventListener("input", async (e) => {
-    const query = e.target.value;
-    const allKoder = await fetchKoder();
-    const filtered = filterKoder(allKoder, query);
-    renderTable(filtered);
-  });
-
-  // Initial load
-  (async () => {
-    const koder = await fetchKoder();
-    renderTable(koder);
-  })();
-</script>
-</body>
-</html>
+      ret
