@@ -2,153 +2,23 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rabattkoder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0e1217;
-      --card: #1a1f24;
-      --text: #e0e0e0;
-      --accent: #00ff95;
-      --input-bg: #161b20;
-      --border: #2a2f35;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 2rem;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      color: var(--accent);
-      margin-bottom: 2rem;
-    }
-
-    .search-container {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background-color: var(--input-bg);
-      color: var(--text);
-      font-size: 1rem;
-      transition: border 0.3s ease;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border: 1px solid var(--accent);
-    }
-
-    .filter-container {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background-color: var(--input-bg);
-      color: var(--text);
-      font-size: 1rem;
-      transition: border 0.3s ease;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: var(--card);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      background-color: var(--card);
-      font-weight: 600;
-      color: var(--accent);
-    }
-
-    tr:hover {
-      background-color: #222831;
-    }
-
-    @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead tr {
-        display: none;
-      }
-
-      tr {
-        background-color: var(--card);
-        margin-bottom: 15px;
-        border-radius: 10px;
-        padding: 10px;
-      }
-
-      td {
-        padding: 10px 10px;
-        border-bottom: none;
-        position: relative;
-      }
-
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        font-weight: bold;
-        color: var(--accent);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Rabattkoder</h1>
+  <header>
+    <h1>💸 Rabattkoder</h1>
+  </header>
 
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="🔍 Sök butik, kod eller kategori..." />
-  </div>
+  <main>
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Sök kod eller butik..." />
+      <select id="categoryFilter">
+        <option value="">Alla kategorier</option>
+      </select>
+    </div>
 
-  <div class="filter-container">
-    <select id="categoryFilter">
-      <option value="">Alla kategorier</option>
-      <!-- Kategorier fylls dynamiskt -->
-    </select>
-  </div>
-
-  <div class="table-container">
     <table id="codesTable">
       <thead>
         <tr>
@@ -159,102 +29,15 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Rabattkoder visas här -->
+        <tr><td colspan="4">Laddar rabattkoder...</td></tr>
       </tbody>
     </table>
-  </div>
+  </main>
 
-  <script>
-    const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
+  <footer>
+    <p>© 2025 Rabattis</p>
+  </footer>
 
-    async function fetchKoder() {
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        return data.koder || [];
-      } catch (e) {
-        console.error("Fel vid hämtning av koder:", e);
-        return [];
-      }
-    }
-
-    function renderTable(koder) {
-      const tbody = document.querySelector("#codesTable tbody");
-      tbody.innerHTML = "";
-
-      if (koder.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
-        return;
-      }
-
-      for (const kod of koder) {
-        const tr = document.createElement("tr");
-        const butik = kod.butiksnamn || kod.store || "";
-        const länk = kod.länk || kod.link || "";
-
-        tr.innerHTML = `
-          <td data-label="Kod">${kod.kod || kod.code || ""}</td>
-          <td data-label="Butik">
-            ${länk ? `<a href="${länk}" target="_blank" style="color: var(--accent); text-decoration: none;">${butik}</a>` : butik}
-          </td>
-          <td data-label="Beskrivning">${kod.beskrivning || kod.description || ""}</td>
-          <td data-label="Utgångsdatum">${kod.utgångsdatum || kod.expires || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function filterKoder(koder, query, category) {
-      return koder.filter(k => {
-        const matchesQuery = !query || (
-          (k.kod || "").toLowerCase().includes(query) ||
-          (k.butiksnamn || "").toLowerCase().includes(query) ||
-          (k.beskrivning || "").toLowerCase().includes(query) ||
-          (k.kategori || "").toLowerCase().includes(query)
-        );
-        const matchesCategory = !category || (k.kategori || "").toLowerCase() === category;
-        return matchesQuery && matchesCategory;
-      });
-    }
-
-    function populateCategories(koder) {
-      const categorySet = new Set();
-      koder.forEach(k => {
-        if (k.kategori) {
-          categorySet.add(k.kategori);
-        }
-      });
-
-      const categoryFilter = document.getElementById("categoryFilter");
-      categorySet.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat.toLowerCase();
-        option.textContent = cat;
-        categoryFilter.appendChild(option);
-      });
-    }
-
-    document.getElementById("searchInput").addEventListener("input", async (e) => {
-      const query = e.target.value.toLowerCase();
-      const category = document.getElementById("categoryFilter").value;
-      const allKoder = await fetchKoder();
-      const filtered = filterKoder(allKoder, query, category);
-      renderTable(filtered);
-    });
-
-    document.getElementById("categoryFilter").addEventListener("change", async (e) => {
-      const category = e.target.value;
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      const allKoder = await fetchKoder();
-      const filtered = filterKoder(allKoder, query, category);
-      renderTable(filtered);
-    });
-
-    (async () => {
-      const koder = await fetchKoder();
-      populateCategories(koder);
-      renderTable(koder);
-    })();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
