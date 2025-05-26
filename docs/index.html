@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rabattis – Logga in</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-container">
+    <h1>Välkommen till <span class="green">Rabattis</span></h1>
+    <p>Få tillgång till exklusiva rabattkoder!</p>
+    
+    <input type="text" id="username" placeholder="Användarnamn" />
+    <input type="password" id="password" placeholder="Lösenord" />
+    <button onclick="login()">Logga in</button>
+    <button class="secondary" onclick="window.location.href='koder.html'">Fortsätt utan inloggning</button>
+    
+    <p id="loginMessage"></p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      if (user === "demo" && pass === "demo") {
+        window.location.href = "koder.html";
+      } else {
+        document.getElementById("loginMessage").textContent = "Fel användarnamn eller lösenord.";
+      }
+    }
+  </script>
+</body>
+</html>
