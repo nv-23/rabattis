@@ -1,113 +1,77 @@
-:root {
-  --bg: #101c1c;
-  --text: #f2fdfd;
-  --accent: #00ffae;
-  --card: #1a2c2c;
-}
-
 body {
-  background: var(--bg);
-  color: var(--text);
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
-header {
-  text-align: center;
-  padding: 1rem;
-  background: var(--card);
+.navbar {
+  background-color: #1f1f1f;
+  padding: 15px 20px;
+  color: #98fb98;
+  font-weight: bold;
+  font-size: 1.3rem;
+  box-shadow: 0 2px 5px #000;
 }
 
-h1 {
-  margin: 0;
-  color: var(--accent);
-}
-
-main {
-  padding: 1rem;
-  max-width: 900px;
+.container {
+  padding: 20px;
+  max-width: 1000px;
   margin: auto;
 }
 
-.controls {
+.filters {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-input, select {
-  padding: 0.5rem;
+.filters input,
+.filters select {
+  padding: 10px;
+  background-color: #222;
+  border: 1px solid #444;
+  color: #e0e0e0;
   border-radius: 5px;
-  border: none;
-  flex: 1;
-  min-width: 150px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
 }
 
-thead {
-  background: var(--card);
+.card {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid limegreen;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
 }
 
-th, td {
-  padding: 1rem;
-  text-align: left;
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  color: #98fb98;
 }
 
-tr {
-  border-bottom: 1px solid #333;
-}
-
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-footer {
-  text-align: center;
-  margin-top: 2rem;
-  padding: 1rem;
-  background: var(--card);
+.card p {
+  margin: 5px 0;
   font-size: 0.9rem;
 }
 
-/* Mobilanpassning */
-@media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
+.card a {
+  color: #00ff99;
+  text-decoration: none;
+}
 
-  thead {
-    display: none;
-  }
+.card a:hover {
+  text-decoration: underline;
+}
 
-  tr {
-    background: var(--card);
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 10px;
-  }
-
-  td {
-    padding: 0.5rem 0;
-    position: relative;
-  }
-
-  td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    color: var(--accent);
-    position: absolute;
-    left: 0;
-    top: 0;
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
   }
 }
