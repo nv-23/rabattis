@@ -43,6 +43,13 @@
     .accent {
       color: limegreen;
     }
+    a {
+      color: limegreen;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -51,7 +58,7 @@
 
   <table id="codesTable">
     <thead>
-      <tr><th>Kod</th><th>Butik</th><th>Beskrivning</th><th>Länk</th></tr>
+      <tr><th>Kod</th><th>Butik</th><th>Beskrivning</th><th>Utgångsdatum</th></tr>
     </thead>
     <tbody>
       <!-- Rabattkoder kommer här -->
@@ -83,11 +90,15 @@
 
     for (const kod of koder) {
       const tr = document.createElement("tr");
+      const butik = kod.url
+        ? `<a href="${kod.url}" target="_blank">${kod.store || kod.butiksnamn || kod.url}</a>`
+        : (kod.store || kod.butiksnamn || "");
+
       tr.innerHTML = `
-        <td class="accent">${kod.kod}</td>
-        <td>${kod.butik}</td>
-        <td>${kod.beskrivning}</td>
-        <td><a href="${kod.url}" target="_blank" style="color:lightblue;">Länk</a></td>
+        <td class="accent">${kod.code || kod.kod || ""}</td>
+        <td>${butik}</td>
+        <td>${kod.description || kod.beskrivning || ""}</td>
+        <td>${kod.expires || kod.utgångsdatum || ""}</td>
       `;
       tbody.appendChild(tr);
     }
@@ -97,9 +108,9 @@
     if (!query) return koder;
     query = query.toLowerCase();
     return koder.filter(k =>
-      (k.kod || "").toLowerCase().includes(query) ||
-      (k.butik || "").toLowerCase().includes(query) ||
-      (k.beskrivning || "").toLowerCase().includes(query)
+      (k.code || k.kod || "").toLowerCase().includes(query) ||
+      (k.store || k.butiksnamn || "").toLowerCase().includes(query) ||
+      (k.description || k.beskrivning || "").toLowerCase().includes(query)
     );
   }
 
@@ -110,6 +121,7 @@
     renderTable(filtered);
   });
 
+  // Initial load
   (async () => {
     const koder = await fetchKoder();
     renderTable(koder);
