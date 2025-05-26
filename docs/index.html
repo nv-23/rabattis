@@ -2,187 +2,129 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rabattis - Rabattkoder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rabattkoder</title>
   <style>
-    :root {
-      --bg: #0d1117;
-      --card-bg: #161b22;
-      --accent: #00ff84;
-      --text: #e6edf3;
-      --muted: #8b949e;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: #0f0f0f;
+      color: #e0e0e0;
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
 
-    header {
-      background: #1f2937;
-      padding: 1rem 2rem;
+    h1 {
       text-align: center;
-      color: var(--accent);
-      font-size: 1.5rem;
+      color: #00ff88;
+      margin-bottom: 20px;
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      background: #161b22;
-      padding: 1rem;
-    }
-
-    .filters select, .filters input {
-      padding: 0.5rem;
-      border-radius: 5px;
+    #searchInput {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
       border: none;
-      background: #0d1117;
-      color: var(--text);
-    }
-
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: 2rem;
+      background-color: #1a1a1a;
+      color: white;
+      margin-bottom: 20px;
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 1.2rem;
-      width: 300px;
-      box-shadow: 0 0 10px #0a0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0, 255, 136, 0.1);
     }
 
-    .card h3 {
-      color: var(--accent);
-      margin: 0;
+    .card h2 {
+      margin: 0 0 5px;
+      color: #00ff88;
+      font-size: 1.2em;
     }
 
     .card p {
-      margin: 0;
-      color: var(--muted);
+      margin: 3px 0;
     }
 
     .card a {
-      color: var(--accent);
+      color: #00ffaa;
       text-decoration: none;
-      margin-top: 0.5rem;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 600px) {
-      .card-container {
-        flex-direction: column;
-        align-items: center;
+      .card {
+        padding: 10px;
       }
     }
   </style>
 </head>
 <body>
-  <header>Rabattkoder</header>
-
-  <div class="filters">
-    <input type="text" id="searchInput" placeholder="Sök kod eller beskrivning..." />
-    <select id="storeFilter">
-      <option value="">Alla butiker</option>
-    </select>
-    <select id="categoryFilter">
-      <option value="">Alla kategorier</option>
-    </select>
-  </div>
-
-  <div class="card-container" id="codeCards">
-    <!-- Kort med rabattkoder visas här -->
-  </div>
+  <h1>Rabattkoder</h1>
+  <input type="text" id="searchInput" placeholder="Sök butik eller kod...">
+  <div id="koderContainer"></div>
 
   <script>
     const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
 
-    let allaKoder = [];
-
     async function fetchKoder() {
       try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        allaKoder = data.koder || [];
-        renderKoder();
-        populateFilters();
-      } catch (err) {
-        console.error("Fel vid hämtning:", err);
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        return data.koder || [];
+      } catch (error) {
+        console.error("Fel vid hämtning:", error);
+        return [];
       }
     }
 
-    function renderKoder() {
-      const container = document.getElementById("codeCards");
+    function renderKoder(koder) {
+      const container = document.getElementById("koderContainer");
       container.innerHTML = "";
 
-      const search = document.getElementById("searchInput").value.toLowerCase();
-      const store = document.getElementById("storeFilter").value;
-      const category = document.getElementById("categoryFilter").value;
-
-      const filtered = allaKoder.filter(kod => {
-        return (!search || kod.code.toLowerCase().includes(search) || kod.description?.toLowerCase().includes(search)) &&
-               (!store || kod.store === store) &&
-               (!category || kod.category === category);
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = "<p style='color: #aaa;'>Inga koder hittades.</p>";
+      if (koder.length === 0) {
+        container.innerHTML = "<p>Inga rabattkoder hittades.</p>";
         return;
       }
 
-      for (const kod of filtered) {
+      koder.forEach(kod => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-          <h3>${kod.code}</h3>
-          <p>${kod.description || "Ingen beskrivning"}</p>
-          <p>Giltig till: ${kod.expires || "Okänt"}</p>
-          <a href="${kod.url || '#'}" target="_blank">${kod.store || "Okänd butik"}</a>
+          <h2>${kod.kod}</h2>
+          <p><strong>Butik:</strong> <a href="${kod.url}" target="_blank">${kod.butiksnamn}</a></p>
+          <p><strong>Beskrivning:</strong> ${kod.beskrivning}</p>
+          <p><strong>Gäller till:</strong> ${kod.utgångsdatum}</p>
         `;
         container.appendChild(card);
-      }
+      });
     }
 
-    function populateFilters() {
-      const storeSelect = document.getElementById("storeFilter");
-      const categorySelect = document.getElementById("categoryFilter");
-
-      const stores = [...new Set(allaKoder.map(k => k.store).filter(Boolean))];
-      const categories = [...new Set(allaKoder.map(k => k.category).filter(Boolean))];
-
-      for (const s of stores) {
-        const option = document.createElement("option");
-        option.value = s;
-        option.textContent = s;
-        storeSelect.appendChild(option);
-      }
-
-      for (const c of categories) {
-        const option = document.createElement("option");
-        option.value = c;
-        option.textContent = c;
-        categorySelect.appendChild(option);
-      }
+    function filterKoder(koder, query) {
+      query = query.toLowerCase();
+      return koder.filter(k =>
+        (k.kod || "").toLowerCase().includes(query) ||
+        (k.butiksnamn || "").toLowerCase().includes(query) ||
+        (k.beskrivning || "").toLowerCase().includes(query)
+      );
     }
 
-    document.getElementById("searchInput").addEventListener("input", renderKoder);
-    document.getElementById("storeFilter").addEventListener("change", renderKoder);
-    document.getElementById("categoryFilter").addEventListener("change", renderKoder);
+    document.getElementById("searchInput").addEventListener("input", async (e) => {
+      const query = e.target.value;
+      const allKoder = await fetchKoder();
+      const filtered = filterKoder(allKoder, query);
+      renderKoder(filtered);
+    });
 
-    fetchKoder();
+    (async () => {
+      const koder = await fetchKoder();
+      renderKoder(koder);
+    })();
   </script>
 </body>
 </html>
