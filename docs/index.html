@@ -4,185 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rabattkoder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #0b0f10;
-      color: #d8f3dc;
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #95d5b2;
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 2rem;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: auto;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      background-color: #1b2223;
-      border: 1px solid #344e41;
-      border-radius: 6px;
-      color: #d8f3dc;
-      font-size: 1rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 14px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #132a13;
-      color: #b7e4c7;
-      font-weight: 600;
-      border-bottom: 1px solid #2d6a4f;
-    }
-
-    td {
-      background-color: #1b2223;
-      border-bottom: 1px solid #2d6a4f;
-    }
-
-    tr:hover td {
-      background-color: #2b3a3b;
-    }
-
-    a {
-      color: #74c69d;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      td {
-        position: relative;
-        padding-left: 50%;
-        border: none;
-        border-bottom: 1px solid #2d6a4f;
-      }
-
-      td::before {
-        position: absolute;
-        left: 10px;
-        top: 12px;
-        white-space: nowrap;
-        font-weight: bold;
-        color: #a3d9a5;
-      }
-
-      td:nth-of-type(1)::before { content: "Kod"; }
-      td:nth-of-type(2)::before { content: "Butik"; }
-      td:nth-of-type(3)::before { content: "Beskrivning"; }
-      td:nth-of-type(4)::before { content: "Utgångsdatum"; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🎁 Rabattkoder</h1>
-    <input type="text" id="searchInput" placeholder="🔍 Sök butik, kod eller beskrivning..." />
+  <nav class="navbar">
+    <div class="logo">🟢 Rabattkoder</div>
+  </nav>
 
-    <table id="codesTable">
-      <thead>
-        <tr>
-          <th>Kod</th>
-          <th>Butik</th>
-          <th>Beskrivning</th>
-          <th>Utgångsdatum</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Rabattkoder kommer här -->
-      </tbody>
-    </table>
-  </div>
+  <main class="container">
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Sök butik eller kod..." />
+      <select id="storeFilter">
+        <option value="">Alla butiker</option>
+      </select>
+      <select id="categoryFilter">
+        <option value="">Alla kategorier</option>
+      </select>
+    </div>
 
-  <script>
-    const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
+    <div id="cardsContainer" class="cards"></div>
+  </main>
 
-    async function fetchKoder() {
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        return data.koder || [];
-      } catch (e) {
-        console.error("Fel vid hämtning av koder:", e);
-        return [];
-      }
-    }
-
-    function renderTable(koder) {
-      const tbody = document.querySelector("#codesTable tbody");
-      tbody.innerHTML = "";
-
-      if (koder.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
-        return;
-      }
-
-      for (const kod of koder) {
-        const butik = kod.store || kod.butiksnamn || "";
-        const butikUrl = kod.url || "";
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${kod.code || kod.kod || ""}</strong></td>
-          <td>${butikUrl ? `<a href="${butikUrl}" target="_blank">${butik}</a>` : butik}</td>
-          <td>${kod.description || kod.beskrivning || ""}</td>
-          <td>${kod.expires || kod.utgångsdatum || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function filterKoder(koder, query) {
-      if (!query) return koder;
-      query = query.toLowerCase();
-      return koder.filter(k =>
-        (k.code || k.kod || "").toLowerCase().includes(query) ||
-        (k.store || k.butiksnamn || "").toLowerCase().includes(query) ||
-        (k.description || k.beskrivning || "").toLowerCase().includes(query)
-      );
-    }
-
-    document.getElementById("searchInput").addEventListener("input", async (e) => {
-      const query = e.target.value;
-      const allKoder = await fetchKoder();
-      const filtered = filterKoder(allKoder, query);
-      renderTable(filtered);
-    });
-
-    (async () => {
-      const koder = await fetchKoder();
-      renderTable(koder);
-    })();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
