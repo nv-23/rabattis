@@ -4,128 +4,175 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rabattkoder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0e1217;
+      --card: #1a1f24;
+      --text: #e0e0e0;
+      --accent: #00ff95;
+      --input-bg: #161b20;
+      --border: #2a2f35;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #121212;
-      color: #d0d0d0;
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem;
     }
+
     h1 {
-      color: limegreen;
       text-align: center;
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 2rem;
     }
+
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
     input[type="text"] {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      background-color: #222;
-      border: none;
-      color: #d0d0d0;
-      border-radius: 5px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background-color: var(--input-bg);
+      color: var(--text);
+      font-size: 1rem;
+      transition: border 0.3s ease;
     }
+
+    input[type="text"]:focus {
+      outline: none;
+      border: 1px solid var(--accent);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      background-color: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
     }
+
     th, td {
-      border-bottom: 1px solid #333;
-      padding: 10px;
+      padding: 16px;
       text-align: left;
+      border-bottom: 1px solid var(--border);
     }
+
     th {
-      background-color: #1a1a1a;
+      background-color: var(--card);
+      font-weight: 600;
+      color: var(--accent);
     }
+
     tr:hover {
-      background-color: #2a2a2a;
+      background-color: #222831;
     }
-    .accent {
-      color: limegreen;
-    }
-    a {
-      color: limegreen;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
+
+    @media (max-width: 600px) {
+      th, td {
+        padding: 12px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Rabattkoder</h1>
-  <input type="text" id="searchInput" placeholder="Sök butik eller kod..." />
 
-  <table id="codesTable">
-    <thead>
-      <tr><th>Kod</th><th>Butik</th><th>Beskrivning</th><th>Utgångsdatum</th></tr>
-    </thead>
-    <tbody>
-      <!-- Rabattkoder kommer här -->
-    </tbody>
-  </table>
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="🔍 Sök butik eller kod..." />
+  </div>
 
-<script>
-  const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
+  <div class="table-container">
+    <table id="codesTable">
+      <thead>
+        <tr>
+          <th>Kod</th>
+          <th>Butik</th>
+          <th>Beskrivning</th>
+          <th>Utgångsdatum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rabattkoder visas här -->
+      </tbody>
+    </table>
+  </div>
 
-  async function fetchKoder() {
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      return data.koder || [];
-    } catch (e) {
-      console.error("Fel vid hämtning av koder:", e);
-      return [];
+  <script>
+    const apiUrl = "https://rabattis-backend.onrender.com/api/koder";
+
+    async function fetchKoder() {
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        return data.koder || [];
+      } catch (e) {
+        console.error("Fel vid hämtning av koder:", e);
+        return [];
+      }
     }
-  }
 
-  function renderTable(koder) {
-    const tbody = document.querySelector("#codesTable tbody");
-    tbody.innerHTML = "";
+    function renderTable(koder) {
+      const tbody = document.querySelector("#codesTable tbody");
+      tbody.innerHTML = "";
 
-    if (koder.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
-      return;
+      if (koder.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inga rabattkoder hittades.</td></tr>`;
+        return;
+      }
+
+      for (const kod of koder) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${kod.kod || kod.code || ""}</td>
+          <td>${kod.butiksnamn || kod.store || ""}</td>
+          <td>${kod.beskrivning || kod.description || ""}</td>
+          <td>${kod.utgångsdatum || kod.expires || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      }
     }
 
-    for (const kod of koder) {
-      const tr = document.createElement("tr");
-      const butik = kod.url
-        ? `<a href="${kod.url}" target="_blank">${kod.store || kod.butiksnamn || kod.url}</a>`
-        : (kod.store || kod.butiksnamn || "");
-
-      tr.innerHTML = `
-        <td class="accent">${kod.code || kod.kod || ""}</td>
-        <td>${butik}</td>
-        <td>${kod.description || kod.beskrivning || ""}</td>
-        <td>${kod.expires || kod.utgångsdatum || ""}</td>
-      `;
-      tbody.appendChild(tr);
+    function filterKoder(koder, query) {
+      if (!query) return koder;
+      query = query.toLowerCase();
+      return koder.filter(k =>
+        (k.kod || "").toLowerCase().includes(query) ||
+        (k.butiksnamn || "").toLowerCase().includes(query) ||
+        (k.beskrivning || "").toLowerCase().includes(query)
+      );
     }
-  }
 
-  function filterKoder(koder, query) {
-    if (!query) return koder;
-    query = query.toLowerCase();
-    return koder.filter(k =>
-      (k.code || k.kod || "").toLowerCase().includes(query) ||
-      (k.store || k.butiksnamn || "").toLowerCase().includes(query) ||
-      (k.description || k.beskrivning || "").toLowerCase().includes(query)
-    );
-  }
+    document.getElementById("searchInput").addEventListener("input", async (e) => {
+      const query = e.target.value;
+      const allKoder = await fetchKoder();
+      const filtered = filterKoder(allKoder, query);
+      renderTable(filtered);
+    });
 
-  document.getElementById("searchInput").addEventListener("input", async (e) => {
-    const query = e.target.value;
-    const allKoder = await fetchKoder();
-    const filtered = filterKoder(allKoder, query);
-    renderTable(filtered);
-  });
-
-  // Initial load
-  (async () => {
-    const koder = await fetchKoder();
-    renderTable(koder);
-  })();
-</script>
+    (async () => {
+      const koder = await fetchKoder();
+      renderTable(koder);
+    })();
+  </script>
 </body>
 </html>
