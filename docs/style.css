@@ -1,0 +1,113 @@
+:root {
+  --bg: #101c1c;
+  --text: #f2fdfd;
+  --accent: #00ffae;
+  --card: #1a2c2c;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 1rem;
+  background: var(--card);
+}
+
+h1 {
+  margin: 0;
+  color: var(--accent);
+}
+
+main {
+  padding: 1rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+input, select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: none;
+  flex: 1;
+  min-width: 150px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: var(--card);
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+}
+
+tr {
+  border-bottom: 1px solid #333;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--card);
+  font-size: 0.9rem;
+}
+
+/* Mobilanpassning */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    background: var(--card);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  td {
+    padding: 0.5rem 0;
+    position: relative;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: var(--accent);
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
